@@ -11,10 +11,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dralexharrison/vscode-swap-word"
+    "url": "https://github.com/dralexharrison/vs-maneuver"
   },
   "bugs": {
-    "url": "https://github.com/dralexharrison/vscode-swap-word/issues"
+    "url": "https://github.com/dralexharrison/vs-maneuver/issues"
   },
   "engines": {
     "vscode": "^1.74.0"
