@@ -1,0 +1,62 @@
+{
+  "name": "swap-word",
+  "displayName": "Swap Word",
+  "description": "Swap the word under cursor with adjacent words using Alt+Left/Right",
+  "version": "0.0.1",
+  "publisher": "dralexharrison",
+  "author": {
+    "name": "Alex Harrison",
+    "url": "https://github.com/dralexharrison"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dralexharrison/vscode-swap-word"
+  },
+  "bugs": {
+    "url": "https://github.com/dralexharrison/vscode-swap-word/issues"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "swapWord.moveLeft",
+        "title": "Swap Word Left"
+      },
+      {
+        "command": "swapWord.moveRight",
+        "title": "Swap Word Right"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "swapWord.moveLeft",
+        "key": "alt+left",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "swapWord.moveRight",
+        "key": "alt+right",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.7.0"
+  }
+}
