@@ -1,4 +1,4 @@
-# Swap Word
+# VS Maneuver
 
 Swap the word under your cursor with adjacent words using simple keyboard shortcuts.
 
@@ -21,7 +21,7 @@ After Alt+Left: const bar foo baz
 
 ## Installation
 
-Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=dralexharrison.swap-word), or search "Swap Word" in the Extensions view.
+Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=dralexharrison.vs-maneuver), or search "VS Maneuver" in the Extensions view.
 
 ## Keybindings
 

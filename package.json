@@ -1,6 +1,6 @@
 {
-  "name": "swap-word",
-  "displayName": "Swap Word",
+  "name": "vs-maneuver",
+  "displayName": "VS Maneuver",
   "description": "Swap the word under cursor with adjacent words using Alt+Left/Right",
   "version": "0.0.1",
   "publisher": "dralexharrison",
