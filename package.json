@@ -3,18 +3,18 @@
   "displayName": "VS Maneuver",
   "description": "Swap the word under cursor with adjacent words using Alt+Left/Right",
   "version": "0.0.1",
-  "publisher": "dralexharrison",
+  "publisher": "DrAlexHarrison",
   "author": {
     "name": "Alex Harrison",
-    "url": "https://github.com/dralexharrison"
+    "url": "https://github.com/DrAlexHarrison"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dralexharrison/vs-maneuver"
+    "url": "https://github.com/DrAlexHarrison/vs-maneuver"
   },
   "bugs": {
-    "url": "https://github.com/dralexharrison/vs-maneuver/issues"
+    "url": "https://github.com/DrAlexHarrison/vs-maneuver/issues"
   },
   "engines": {
     "vscode": "^1.74.0"
