@@ -1,88 +1,81 @@
 import * as vscode from 'vscode';
+import { swapWord } from './swap.js';
+import type { SwapDirection } from './swap.js';
+
+async function swapActiveWord(direction: SwapDirection): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    const document = editor.document;
+    const primarySelection = editor.selection;
+    const position = primarySelection.active;
+    const line = document.lineAt(position.line);
+
+    const result = swapWord(line.text, position.character, direction);
+    if (!result) {
+        return;
+    }
+
+    // Replace only the two swapped words and the separator between them.
+    // A whole-line replacement needlessly disturbs other cursors, markers,
+    // and undo state for text that did not change.
+    const replaceRange = new vscode.Range(
+        position.line,
+        result.replaceStart,
+        position.line,
+        result.replaceEnd,
+    );
+
+    // Captured before the edit so other cursors can be kept. The swap never
+    // changes the line length, so their columns are still valid afterwards.
+    const previousSelections = [...editor.selections];
+
+    const edited = await editor.edit((editBuilder) => {
+        editBuilder.replace(replaceRange, result.replacementText);
+    });
+    if (!edited) {
+        return;
+    }
+
+    const newPosition = new vscode.Position(
+        position.line,
+        result.newCursorColumn,
+    );
+    const newSelection = new vscode.Selection(newPosition, newPosition);
+
+    if (previousSelections.length <= 1) {
+        editor.selection = newSelection;
+        return;
+    }
+
+    // Move only the cursor that invoked the swap; keep the others in place.
+    let movedPrimary = false;
+    const nextSelections = previousSelections.map((selection) => {
+        if (!movedPrimary && selection.isEqual(primarySelection)) {
+            movedPrimary = true;
+            return newSelection;
+        }
+        return selection;
+    });
+
+    if (movedPrimary) {
+        editor.selections = nextSelections;
+    } else {
+        editor.selection = newSelection;
+    }
+}
 
 export function activate(context: vscode.ExtensionContext) {
-    const moveLeftCmd = vscode.commands.registerCommand('swapWord.moveLeft', async () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
-
-        const document = editor.document;
-        const position = editor.selection.active;
-        const line = document.lineAt(position.line);
-        const lineText = line.text;
-
-        // Get current word range
-        const currentWordRange = document.getWordRangeAtPosition(position);
-        if (!currentWordRange) return;
-
-        const currentWord = document.getText(currentWordRange);
-        const currentStart = currentWordRange.start.character;
-        const currentEnd = currentWordRange.end.character;
-
-        // Find previous word
-        const textBefore = lineText.substring(0, currentStart);
-        const prevMatch = textBefore.match(/(\w+)(\s*)$/);
-        if (!prevMatch) return;
-
-        const prevWord = prevMatch[1];
-        const spaceBetween = prevMatch[2];
-        const prevStart = currentStart - prevMatch[0].length;
-
-        // Build the swapped text
-        const beforePrev = lineText.substring(0, prevStart);
-        const afterCurrent = lineText.substring(currentEnd);
-        const newLineText = beforePrev + currentWord + spaceBetween + prevWord + afterCurrent;
-
-        await editor.edit(editBuilder => {
-            editBuilder.replace(line.range, newLineText);
-        });
-
-        // Move cursor to stay with the word we moved
-        const newPos = new vscode.Position(position.line, prevStart + currentWord.length);
-        editor.selection = new vscode.Selection(newPos, newPos);
-    });
-
-    const moveRightCmd = vscode.commands.registerCommand('swapWord.moveRight', async () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
-
-        const document = editor.document;
-        const position = editor.selection.active;
-        const line = document.lineAt(position.line);
-        const lineText = line.text;
-
-        // Get current word range
-        const currentWordRange = document.getWordRangeAtPosition(position);
-        if (!currentWordRange) return;
-
-        const currentWord = document.getText(currentWordRange);
-        const currentStart = currentWordRange.start.character;
-        const currentEnd = currentWordRange.end.character;
-
-        // Find next word
-        const textAfter = lineText.substring(currentEnd);
-        const nextMatch = textAfter.match(/^(\s*)(\w+)/);
-        if (!nextMatch) return;
-
-        const spaceBetween = nextMatch[1];
-        const nextWord = nextMatch[2];
-        const nextEnd = currentEnd + nextMatch[0].length;
-
-        // Build the swapped text
-        const beforeCurrent = lineText.substring(0, currentStart);
-        const afterNext = lineText.substring(nextEnd);
-        const newLineText = beforeCurrent + nextWord + spaceBetween + currentWord + afterNext;
-
-        await editor.edit(editBuilder => {
-            editBuilder.replace(line.range, newLineText);
-        });
-
-        // Move cursor to stay with the word we moved
-        const newPos = new vscode.Position(
-            position.line,
-            currentStart + nextWord.length + spaceBetween.length + currentWord.length
-        );
-        editor.selection = new vscode.Selection(newPos, newPos);
-    });
+    const moveLeftCmd = vscode.commands.registerCommand(
+        'swapWord.moveLeft',
+        () => swapActiveWord('left'),
+    );
+    const moveRightCmd = vscode.commands.registerCommand(
+        'swapWord.moveRight',
+        () => swapActiveWord('right'),
+    );
 
     context.subscriptions.push(moveLeftCmd, moveRightCmd);
 }
